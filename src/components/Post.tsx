@@ -14,6 +14,26 @@ function PostDetail({ id }: PostDetailProps) {
   return (
     <div>
       <h2>{data?.title}</h2>
+      <p>{data?.body}</p>
+    </div>
+  );
+}
+
+function PostDetailFormResult({ id }: PostDetailProps) {
+  const { data, isLoading, isError } = useGetPostsQuery(undefined, {
+    selectFromResult: ({ data, ...rest }) => ({
+      ...rest,
+      data: data?.find((post) => post.id === id),
+    }),
+  });
+
+  // ========== renter ==========
+  if (isLoading) return <Skeleton active />;
+  if (isError) return <Result />;
+  return (
+    <div>
+      <h2>{data?.title}</h2>
+      <p>{data?.body}</p>
     </div>
   );
 }
@@ -45,6 +65,8 @@ export default function Post() {
     <div>
       <PostList onSelect={(id) => setActive(id)} />
       {active && <PostDetail id={active} />}
+      <hr />
+      {active && <PostDetailFormResult id={active} />}
     </div>
   );
 }
